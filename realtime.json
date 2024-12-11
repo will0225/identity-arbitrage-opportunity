@@ -1,0 +1,100 @@
+subscription {
+    EVM(network: bsc, mempool: true) {
+      DEXTrades(
+        orderBy: {ascending: Transaction_Time}
+        limit: {count: 10, offset: 0}
+        where: {}
+      ) {
+        Trade {
+          Dex {
+            ProtocolFamily
+            ProtocolName
+            ProtocolVersion
+            SmartContract
+            Pair {
+              Name
+              SmartContract
+              Symbol
+            }
+            OwnerAddress
+          }
+          Buy {
+            Amount
+            AmountInUSD
+            Buyer
+            Price
+            PriceInUSD
+            Seller
+            URIs
+            Currency {
+              Name
+              ProtocolName
+              SmartContract
+              Symbol
+            }
+          }
+          Fees {
+            Amount
+            AmountInUSD
+            Recipient
+            Payer
+            Currency {
+              Name
+              ProtocolName
+              SmartContract
+              Symbol
+            }
+          }
+          Sender
+          Sell {
+            Amount
+            AmountInUSD
+            Buyer
+            Price
+            PriceInUSD
+            Seller
+          }
+        }
+        Fee {
+          Burnt
+          BurntInUSD
+          EffectiveGasPrice
+          EffectiveGasPriceInUSD
+          GasRefund
+          SenderFee
+          SenderFeeInUSD
+          PriorityFeePerGasInUSD
+          PriorityFeePerGas
+          MinerRewardInUSD
+          MinerReward
+        }
+        Block {
+          GasUsed
+          GasLimit
+          Hash
+          BaseFee
+          Date
+          Time
+        }
+        Transaction {
+          Gas
+          GasPrice
+          Value
+          Time
+          Hash
+          Nonce
+          GasFeeCapInUSD
+          GasFeeCap
+          Cost
+          From
+          CostInUSD
+          GasPriceInUSD
+        }
+        TransactionStatus {
+          Success
+          FaultError
+          EndError
+        }
+      }
+    }
+  }
