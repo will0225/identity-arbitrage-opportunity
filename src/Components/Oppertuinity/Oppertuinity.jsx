@@ -217,20 +217,19 @@ const Oppertuinity = () => {
             if(secondToken.length == 0) return;
             secondIndex = filteredAssets.indexOf(secondToken[0]);
             var NumberOffirstToken = randomAsset.Trade.Buy.AmountInUSD/randomAsset.Trade.Buy.PriceInUSD;
-            // secondToken = secondToken.filter((token) => {
-            //   var amountOfToken = token.Trade.Buy.AmountInUSD/token.Trade.Buy.PriceInUSD;
-            //   if(Number.parseInt(Math.abs(amountOfToken - NumberOffirstToken)) > 0) return token;
-            // })
+            console.log(secondToken)
+            secondToken = secondToken.filter((token) => {
+              var amountOfToken = token.Trade.Buy.AmountInUSD/token.Trade.Buy.PriceInUSD;
+              if(Number.parseInt(Math.abs(amountOfToken - NumberOffirstToken)) > 0) return token;
+            })
             console.log(randomAsset)
             console.log(secondToken[0])
-            
+            if(secondToken.length == 0) return;
             var NumberOfSecondToken = secondToken[0].Trade.Buy.AmountInUSD/secondToken[0].Trade.Buy.PriceInUSD;
             var AmountOfDitalAsset = Number.parseInt(Math.abs(NumberOfSecondToken - NumberOffirstToken))
-           
+            console.log(AmountOfDitalAsset)
             if(AmountOfDitalAsset == 0) return
-            setSelectedToken(randomAsset.Trade.Buy.Currency.Symbol);
-      
-            setPrice(randomAsset.Trade.Buy.PriceInUSD.toFixed(6));
+
             var reduced = 0;
             var increased = 0
             if(secondToken[0].Trade.Buy.PriceInUSD > filteredAssets[firstIndex].Trade.Buy.PriceInUSD)
@@ -252,6 +251,8 @@ const Oppertuinity = () => {
             setDAB(AmountOfDitalAsset);
             setEstimateProfit((AmountOfDitalAsset * (increased-reduced)).toFixed(2))
             setEstimatedFunds((AmountOfDitalAsset*reduced).toFixed(2));
+            setSelectedToken(randomAsset.Trade.Buy.Currency.Symbol);
+            setPrice(randomAsset.Trade.Buy.PriceInUSD.toFixed(6));
             
           } else {
             console.log("No valid assets available after filtering out 'VVS'.");
