@@ -39,12 +39,10 @@ const Oppertuinity = () => {
   const [estimateProfit, setEstimateProfit] = useState(null);
   const [estimatedFunds, setEstimatedFunds] = useState(null);
   const [DAB, setDAB] = useState(null);
-
+  const [assetIndex, setAssetIndex] = useState(0);
   const fetchData = async () => {
     try {
-    // const res = await axios.get("https://backend.dsl.sg/tokens-coin");
-    // const assets = res.data;
-    
+  
     let data = JSON.stringify({
       "query": `
       subscription {
@@ -173,8 +171,8 @@ const Oppertuinity = () => {
      const assets = res.data.EVM.DEXTrades;
       setDigitalAsset(assets);
       if (assets.length > 0) {
-        setSelectedToken(assets[0].Trade.Buy.Currency.Symbol);
-        setPrice(assets[0].Trade.Buy.PriceInUSD.toFixed(6));
+        // setSelectedToken(assets[0].Trade.Buy.Currency.Symbol);
+        // setPrice(assets[0].Trade.Buy.PriceInUSD.toFixed(6));
       }
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -193,16 +191,12 @@ const Oppertuinity = () => {
 
       interval = setInterval(() => {
         if (digitalAsset.length > 0) {
-          const filteredAssets = digitalAsset.filter(
-            (asset) => asset.Trade.Buy.Currency.Symbol !== 'VVS' && asset.Trade.Buy.Currency.Symbol !== 'VOLT' && asset.Trade.Buy.Currency.Symbol !== 'XYZ'
-          );
+          const filteredAssets = digitalAsset;
+
           if (filteredAssets.length > 0) { 
             const randomIndex = Math.floor(Math.random() * filteredAssets.length);
             
             const randomAsset = filteredAssets[randomIndex];
-
-            setSelectedToken(randomAsset.Trade.Buy.Currency.Symbol);
-            setPrice(randomAsset.Trade.Buy.PriceInUSD.toFixed(6));
             setAnimate(true);
             setTimeout(() => {
               setAnimate(false);
@@ -210,92 +204,68 @@ const Oppertuinity = () => {
             let firstIndex = randomIndex;
             let secondIndex;
             let secondToken;
-            
+           
             secondToken = filteredAssets.filter((asset) => 
             {
             if((asset.Trade.Buy.Currency.Symbol === randomAsset.Trade.Buy.Currency.Symbol)
-            && (asset.Trade.Dex.SmartContract != randomAsset.Trade.Dex.SmartContract) 
+            && (asset.Trade.Dex.ProtocolFamily != randomAsset.Trade.Dex.ProtocolFamily) 
             && (asset.Trade.Buy.PriceInUSD.toFixed(2) != randomAsset.Trade.Buy.PriceInUSD.toFixed(2)))
             {
               return asset;
             }
             });
-
+            if(secondToken.length == 0) return;
             secondIndex = filteredAssets.indexOf(secondToken[0]);
+            var NumberOffirstToken = randomAsset.Trade.Buy.AmountInUSD/randomAsset.Trade.Buy.PriceInUSD;
+            // secondToken = secondToken.filter((token) => {
+            //   var amountOfToken = token.Trade.Buy.AmountInUSD/token.Trade.Buy.PriceInUSD;
+            //   if(Number.parseInt(Math.abs(amountOfToken - NumberOffirstToken)) > 0) return token;
+            // })
             console.log(randomAsset)
             console.log(secondToken[0])
-            var NumberOffirstToken = randomAsset.Trade.Buy.AmountInUSD/randomAsset.Trade.Buy.PriceInUSD;
             
             var NumberOfSecondToken = secondToken[0].Trade.Buy.AmountInUSD/secondToken[0].Trade.Buy.PriceInUSD;
             var AmountOfDitalAsset = Number.parseInt(Math.abs(NumberOfSecondToken - NumberOffirstToken))
+           
             if(AmountOfDitalAsset == 0) return
-            setDAB(AmountOfDitalAsset);
-            setEstimateProfit((AmountOfDitalAsset * (increasedPrice-reducedPrice)).toFixed(2))
-            setEstimatedFunds((AmountOfDitalAsset*reducedPrice).toFixed(2));
-         
+            setSelectedToken(randomAsset.Trade.Buy.Currency.Symbol);
+      
+            setPrice(randomAsset.Trade.Buy.PriceInUSD.toFixed(6));
+            var reduced = 0;
+            var increased = 0
             if(secondToken[0].Trade.Buy.PriceInUSD > filteredAssets[firstIndex].Trade.Buy.PriceInUSD)
             {
               setSelectedServices([filteredAssets[firstIndex].Trade.Dex.ProtocolFamily, secondToken[0].Trade.Dex.ProtocolFamily]);
               setReducedPrice(filteredAssets[firstIndex].Trade.Buy.PriceInUSD.toFixed(2));
               setIncreasedPrice(secondToken[0].Trade.Buy.PriceInUSD.toFixed(2));
+              reduced = filteredAssets[firstIndex].Trade.Buy.PriceInUSD.toFixed(2);
+              increased = secondToken[0].Trade.Buy.PriceInUSD.toFixed(2);
             }
             else {
               setSelectedServices([secondToken[0].Trade.Dex.ProtocolFamily, filteredAssets[firstIndex].Trade.Dex.ProtocolFamily]);
               setIncreasedPrice(filteredAssets[firstIndex].Trade.Buy.PriceInUSD.toFixed(2));
               setReducedPrice(secondToken[0].Trade.Buy.PriceInUSD.toFixed(2));
+              reduced = secondToken[0].Trade.Buy.PriceInUSD.toFixed(2);
+              increased = filteredAssets[firstIndex].Trade.Buy.PriceInUSD.toFixed(2);
             }
 
-            // let balanceA = (loanAmount - parseFloat(exFee))?.toFixed(6);
-            // setDAB((balanceA / reducedPrice).toFixed(6));
-            // let balanceB = (DAB - exFeeB).toFixed(6);
-            // let UR = (balanceB * increasedPrice).toFixed(6);
-            // let TEF = (parseFloat(exFee) + parseFloat(exFeeB) * increasedPrice).toFixed(6);
-            // let TGF = 0.105022 + 0.105022;
-            // let LF
-          
-            // if (selectedOption === 'Own Funds') {
-            //   LF = loanAmount;
-            // }
-            // else {
-            //   LF = (loanAmount * 1.005).toFixed(6)
-            // }
-            // let BSF = (1.000000).toFixed(6);
-            // let TotalExpenses = (parseFloat(TEF) + parseFloat(TGF) + parseFloat(LF) + parseFloat(BSF)).toFixed(6);
-            // let profit = (UR - TotalExpenses).toFixed(6);
-
-            const numericPrice = Number(price);
-
-            if (!isNaN(numericPrice)) {
-              const pre = Number((numericPrice - numericPrice * 0.02).toFixed(6));
-              const post = Number((numericPrice + numericPrice * 0.02).toFixed(6));
-              
-            } else {
-              console.error("Price is not a valid number:", price);
-            }
+            setDAB(AmountOfDitalAsset);
+            setEstimateProfit((AmountOfDitalAsset * (increased-reduced)).toFixed(2))
+            setEstimatedFunds((AmountOfDitalAsset*reduced).toFixed(2));
             
           } else {
             console.log("No valid assets available after filtering out 'VVS'.");
           }
         }
-  
-        if (loan?.length > 0) {
-          let number = loan[Math.floor(Math.random() * loan.length)];
-          if (number === 1000000 || number === 1000) {
-            setLoanAmount(`${number}.000000`);
-          } else {
-            let randomDecimal = (Math.random()).toFixed(6).slice(2);
-            setLoanAmount(`${number}.${randomDecimal}`);
-          }
-        }
-  
+        
         setAlertShow(true);
         
-      }, 4000);
+      }, 3000);
     }
     return () => {
       clearInterval(interval);
     };
-  }, [isStartPopUp, digitalAsset, services, loan]);
+  }, [isStartPopUp, digitalAsset, services]);
 
   useEffect(() => {
     window.scroll(0, 0)
@@ -550,7 +520,7 @@ const Oppertuinity = () => {
                       {estimateProfit}
                     </td>
                   </tr>
-                  <tr className="text-dark">
+                  <tr className="text-dark" style={{ display: estimateProfit > 0?"contents":"none"}}>
                     <td
                       colSpan="2"
                       style={{
@@ -634,7 +604,7 @@ const Oppertuinity = () => {
                         style={{  whiteSpace: "nowrap" }}
                         className="mx-auto my-2 mb-4 fw-bold"
                       >
-                        Profit: {profit} USDT
+                        Profit: {estimateProfit} USDT
                       </p>
                     </motion.div>
 

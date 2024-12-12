@@ -20,7 +20,7 @@ const CountDown = ({ price, alertShow, setAlertShow, isOthers, isStartPopUp }) =
             if (countdown === 2) {
               setCurrentPrice(price);
             }
-            if (countdown === 1 && !hasToastBeenShown) {
+            if (countdown === 1 && !hasToastBeenShown && price > 0) {
               toast.dismiss();
       
               toast(<div>
@@ -58,12 +58,12 @@ const CountDown = ({ price, alertShow, setAlertShow, isOthers, isStartPopUp }) =
     return (
         <div>
             {
-                isOthers === 1 ? 
-                <span className='text-center'>
-                    <span style={{ color: 'yellow', fontWeight: 'bold' }}>{countdown} {countdown === 1? 'second': 'seconds'}</span>
-                </span> 
-                : 
-                (isOthers === 2 ? 
+                // isOthers === 1 && price > 0  ? 
+                // <span className='text-center'>
+                //     <span style={{ color: 'yellow', fontWeight: 'bold' }}>{countdown} {countdown === 1? 'second': 'seconds'}</span>
+                // </span> 
+                // : 
+                price  > 0 ? (isOthers === 2 ? 
                     <p className='text-center justify-content-center d-flex flex-column flex-sm-row gap-1 my-0 py-2'>
                         Secure the Opportunity Now! <span style={{ color: 'yellow', fontWeight: 'bold' }}>{countdown} {countdown === 1? 'second': 'seconds'}</span> 
                     </p>
@@ -72,7 +72,7 @@ const CountDown = ({ price, alertShow, setAlertShow, isOthers, isStartPopUp }) =
                         You’re about to miss out on earning <span className='text-decoration-underline fw-bold'>{price}</span> USDT
                         in the next <span style={{ color: 'yellow', fontWeight: 'bold' }}>{countdown} {countdown === 1? 'second': 'seconds'}</span> .
                     </p>
-                )
+                ):null
             }
 
             <ToastContainer
